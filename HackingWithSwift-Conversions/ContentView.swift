@@ -9,14 +9,15 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State private var fromUnit: String = "Celsius"
-    @State private var toUnit: String = "Fahrenheit"
-    @State private var inputValue: Double = 0
+    @State private var fromUnit: String = "Celsius" //The base temperature unit that is going to be converted.
+    @State private var toUnit: String = "Fahrenheit" //The temperature unit to be converted into.
+    @State private var inputValue: Double = 0 //The input value that has a @Binding on the TextField. This value id going to be converted.
     
-    var temperatureUnits = ["Celsius", "Fahrenheit", "Kelvin"]
+    var temperatureUnits = ["Celsius", "Fahrenheit", "Kelvin"] //String Array of Temperature Units available to be converted.
     
-    @FocusState private var inputFocus: Bool
+    @FocusState private var inputFocus: Bool //A focus state property to handle when the keyboard is or is not in focus.
     
+    //A computed property to convert the inputValue into Celsius and converting it to the choosen toUnit.
     var result: String {
         let inputConverted: Double
         let outputConverted: Double
@@ -48,7 +49,7 @@ struct ContentView: View {
                 Section("Input Value") {
                     TextField("Input Value", value: $inputValue, format: .number)
                         .keyboardType(.decimalPad)
-                        .focused($inputFocus)
+                        .focused($inputFocus) //Keeps an eye on the FocusState of the TextField.
                 }
                 
                 Section("From Temperature") {
@@ -75,6 +76,7 @@ struct ContentView: View {
                 
             }
             .navigationTitle("Temperature Conversion")
+            //A toolbar button to toggle the keyboard of the TextField, depending on the @FocusState.
             .toolbar {
                 if inputFocus {
                     Button("Done") {
