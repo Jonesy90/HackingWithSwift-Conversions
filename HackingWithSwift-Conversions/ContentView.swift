@@ -15,40 +15,37 @@ struct ContentView: View {
     
     var temperatureUnits = ["Celsius", "Fahrenheit", "Kelvin"]
     
-    var convertedValue: Double {
-        var value: Double = 0
+    var result: String {
+        let inputConverted: Double
+        let outputConverted: Double
         
-        if fromUnit == "Celsius" {
-            value = inputValue
-        } else if fromUnit == "Fahrenheit" {
-            value =  (inputValue - 32) * 5 / 9
-        } else if fromUnit == "Kelvin" {
-            value = (inputValue - 273.15)
+        switch fromUnit {
+        case "Fahrenheit":
+            inputConverted = (inputValue - 32) * 5 / 9
+        case "Kelvin":
+            inputConverted = (inputValue - 273.15)
+        default:
+            inputConverted = inputValue
         }
         
-        return value
-    }
-    
-    var outputValue: Double {
-        var outputValue: Double = 0
-        
-        if toUnit == "Celsius" {
-            outputValue = convertedValue
-        } else if toUnit == "Fahrenheit" {
-            outputValue = (convertedValue * 9 / 5) + 32
-        } else if toUnit == "Kelvin" {
-            outputValue = convertedValue + 273.15
+        switch toUnit {
+        case "Fahrenheit":
+            outputConverted = (inputConverted * 9 / 5) + 32
+        case "Kelvin":
+            outputConverted = (inputConverted + 273.15)
+        default:
+            outputConverted = inputConverted
         }
         
-        return outputValue
+        return "\(outputConverted)"
     }
-    
     
     var body: some View {
         NavigationStack {
             Form {
                 Section("Input Value") {
                     TextField("Input Value", value: $inputValue, format: .number)
+                        .keyboardType(.decimalPad)
                 }
                 
                 Section("From Temperature") {
@@ -70,7 +67,7 @@ struct ContentView: View {
                 }
                 
                 Section("Output Value") {
-                    Text("\(outputValue.formatted())")
+                    Text(result)
                 }
                 
             }
