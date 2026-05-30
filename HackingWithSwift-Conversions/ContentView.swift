@@ -15,6 +15,8 @@ struct ContentView: View {
     
     var temperatureUnits = ["Celsius", "Fahrenheit", "Kelvin"]
     
+    @FocusState private var inputFocus: Bool
+    
     var result: String {
         let inputConverted: Double
         let outputConverted: Double
@@ -46,6 +48,7 @@ struct ContentView: View {
                 Section("Input Value") {
                     TextField("Input Value", value: $inputValue, format: .number)
                         .keyboardType(.decimalPad)
+                        .focused($inputFocus)
                 }
                 
                 Section("From Temperature") {
@@ -72,6 +75,13 @@ struct ContentView: View {
                 
             }
             .navigationTitle("Temperature Conversion")
+            .toolbar {
+                if inputFocus {
+                    Button("Done") {
+                        inputFocus = false
+                    }
+                }
+            }
         }
     }
 }
