@@ -12,8 +12,10 @@ struct ContentView: View {
     //@State private var fromUnit: String = "Celsius" //The base temperature unit that is going to be converted.
     //@State private var toUnit: String = "Fahrenheit" //The temperature unit to be converted into.
     
-    @State private var fromUnit = UnitTemperature.celsius
-    @State private var toUnit = UnitTemperature.fahrenheit
+    let formatter: MeasurementFormatter //Overrides the automatic adjustment of UnitTemperature (and other Units). By default, it would match it against the users preferences.
+    
+    @State private var inputUnit = UnitTemperature.celsius
+    @State private var outputUnit = UnitTemperature.fahrenheit
     
     @State private var inputValue: Double = 0 //The input value that has a @Binding on the TextField. This value id going to be converted.
     
@@ -22,30 +24,18 @@ struct ContentView: View {
     
     @FocusState private var inputFocus: Bool //A focus state property to handle when the keyboard is or is not in focus.
     
-    //A computed property to convert the inputValue into Celsius and converting it to the choosen toUnit.
+    //A computed property to convert the inputValue into Celsius and converting it to the chosen toUnit.
     var result: String {
-        let inputConverted: Double
-        let outputConverted: Double
-        
-        switch fromUnit {
-        case "Fahrenheit":
-            inputConverted = (inputValue - 32) * 5 / 9
-        case "Kelvin":
-            inputConverted = (inputValue - 273.15)
-        default:
-            inputConverted = inputValue
-        }
-        
-        switch toUnit {
-        case "Fahrenheit":
-            outputConverted = (inputConverted * 9 / 5) + 32
-        case "Kelvin":
-            outputConverted = (inputConverted + 273.15)
-        default:
-            outputConverted = inputConverted
-        }
-        
-        return "\(outputConverted)"
+        let inputMeasurement = Measurement(value: inputValue, unit: inputUnit)
+        let outputMeasurement = inputMeasurement.converted(to: outputUnit)
+        return formatter.string(from: outputMeasurement)
+    }
+    
+    // Custom Initialiser that handles the MeasurementFormatter.
+    init() {
+        formatter = MeasurementFormatter()
+        formatter.unitOptions = .providedUnit
+        formatter.unitStyle = .short
     }
     
     var body: some View {
@@ -58,18 +48,18 @@ struct ContentView: View {
                 }
                 
                 Section("From Temperature") {
-                    Picker("From Temperature", selection: $fromUnit) {
+                    Picker("From Temperature", selection: $inputUnit) {
                         ForEach(temperatureUnits, id: \.self) {
-                            Text($0)
+                            Text(formatter.string(from: $0).capitalized)
                         }
                     }
                     .pickerStyle(.segmented)
                 }
                 
                 Section("To Temperature") {
-                    Picker("From Temperature", selection: $toUnit) {
+                    Picker("From Temperature", selection: $outputUnit) {
                         ForEach(temperatureUnits, id: \.self) {
-                            Text($0)
+                            Text(formatter.string(from: $0).capitalized)
                         }
                     }
                     .pickerStyle(.segmented)
